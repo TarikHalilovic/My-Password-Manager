@@ -32,7 +32,7 @@ export const AddEditEntry = ({navigation, route}) => {
     
     return (
         <View style={styles.container}>
-            <View style={{}}>
+            <View>
                 <Text style={styles.formLabel}>
                     {(entry.id == "0" ? 'New' : 'Edit')} Entry
                 </Text>
