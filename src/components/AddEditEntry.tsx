@@ -7,13 +7,14 @@ export const AddEditEntry = ({navigation, route}) => {
         (route.params?.row != undefined) ?
         route.params.row :
         {
-            id: 0,
+            id: "0",
             name: '',
             username: '',
             email: '',
             pw: '',
         }
     );
+
     function validate(){
         if(entry.name == ""){
             setNameError("Service name/url must have value.")
@@ -24,11 +25,18 @@ export const AddEditEntry = ({navigation, route}) => {
         }
     }
 
+    function generateRandomPw(pwLength: number = 16){
+        // Not truly random
+        return Array(pwLength).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@-#$").map(function(x) { return x[Math.floor(Math.random() * x.length)] }).join('');;
+    }
+    
     return (
         <View style={styles.container}>
-            <Text style={styles.formLabel}>
-                {entry.id == 0 ? 'New' : 'Edit'} Entry
-            </Text>
+            <View style={{}}>
+                <Text style={styles.formLabel}>
+                    {(entry.id == "0" ? 'New' : 'Edit')} Entry
+                </Text>
+            </View>
             <View>
                 <TextInput
                     placeholder="Service name/url"
@@ -58,13 +66,22 @@ export const AddEditEntry = ({navigation, route}) => {
                     <Text style={styles.errorText}>{nameError}</Text>
                 </View>
                 <Button 
-                    title="Submit"
+                    title="Generate Password"
                     onPress={() => {
-                        if(validate()){
-                            navigation.navigate('MainScreen', {entry});
-                        }
+                        setEntry({id: entry.id, name: entry.name, username: entry.username, email: entry.email, pw: generateRandomPw()});
                     }}
+                    color="#bad1f5"
                 />
+                <View style={styles.submitButtonWrapper}>
+                    <Button 
+                        title="Submit"
+                        onPress={() => {
+                            if(validate()){
+                                navigation.navigate('MainScreen', {entry});
+                            }
+                        }}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -79,7 +96,7 @@ const styles = StyleSheet.create({
       height: 50,
     },
     formLabel: {
-        fontSize: 20,
+        fontSize: 17,
         color: '#fff',
         marginBottom: 20,
     },
@@ -99,4 +116,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 7
     },
+    submitButtonWrapper:{
+        marginTop: 10,
+    }
   });

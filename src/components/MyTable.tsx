@@ -13,7 +13,7 @@ export const MyTable = ({ navigation, rows, deleteAction }) => {
                         row={item}
                         deleteAction={deleteAction}
                     />}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={item => item.id}
             />
         </View>
     );

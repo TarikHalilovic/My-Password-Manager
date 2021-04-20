@@ -185,6 +185,11 @@ android {
 
         }
     }
+	
+	// added for https://rnmmkv.vercel.app/#/gettingstarted 
+	packagingOptions {
+		pickFirst '**/*.so'
+    }
 }
 
 dependencies {

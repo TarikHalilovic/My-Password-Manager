@@ -10,10 +10,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { MainScreen } from '../components/MainScreen';
 import { AddEditEntry } from '../components/AddEditEntry';
-
+import MMKVStorage from "react-native-mmkv-storage";
 const Stack = createStackNavigator();
 
 const App: () => ReactNode = () => {
+
   return (
     <NavigationContainer>
       <SafeAreaView style={styles.container}>
