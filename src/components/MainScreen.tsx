@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {SearchBar} from 'react-native-elements';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Alert} from 'react-native';
 import {MyTable} from './MyTable';
+import {ConfirmDeleteDialog} from './ConfirmDeleteDialog';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {MMKVService} from '../service/MMKVService';
@@ -10,6 +12,10 @@ export const MainScreen = ({navigation, route}) => {
     const [storageService, setStorageService] = useState(null);
     const [data, setData] = useState([]);
     const [visibleData, setVisibleData] = useState([]);
+    const [showConfirmDeleteDialog, setShowConfirmDeleteDialog] = useState(
+        false,
+    );
+    const [deleteId, setDeleteId] = useState('-1');
 
     useEffect(() => {
         const service = MMKVService.initialize();
@@ -48,6 +54,13 @@ export const MainScreen = ({navigation, route}) => {
     }
 
     function deleteEntry(rowId: string) {
+        setDeleteId(rowId);
+        setShowConfirmDeleteDialog(true);
+    }
+
+    function deleteEntryFinalize(rowId: string) {
+        if (rowId == '-1') return;
+
         MMKVService.removeAsync(storageService, rowId);
 
         setData(data.filter(x => x.id != rowId));
@@ -103,6 +116,12 @@ export const MainScreen = ({navigation, route}) => {
 
     return (
         <View style={styles.container}>
+            <ConfirmDeleteDialog
+                showDialog={showConfirmDeleteDialog}
+                rowId={deleteId}
+                deleteEntry={deleteEntryFinalize}
+                setShowDialog={setShowConfirmDeleteDialog}
+            />
             <SearchBar
                 placeholder="Search"
                 onChangeText={onChangeSearch}

@@ -46,7 +46,7 @@ export const AddEditEntry = ({navigation, route}) => {
             <View>
                 <TextInput
                     placeholder="Service name/url"
-                    placeholderTextColor="#2f3831"
+                    placeholderTextColor="#8a6e6d"
                     style={styles.inputStyle}
                     value={entry.name}
                     onChangeText={val =>
@@ -61,7 +61,7 @@ export const AddEditEntry = ({navigation, route}) => {
                 />
                 <TextInput
                     placeholder="Username"
-                    placeholderTextColor="#2f3831"
+                    placeholderTextColor="#8a6e6d"
                     style={styles.inputStyle}
                     value={entry.username}
                     onChangeText={val =>
@@ -76,7 +76,7 @@ export const AddEditEntry = ({navigation, route}) => {
                 />
                 <TextInput
                     placeholder="Email"
-                    placeholderTextColor="#2f3831"
+                    placeholderTextColor="#8a6e6d"
                     style={styles.inputStyle}
                     value={entry.email}
                     onChangeText={val =>
@@ -91,7 +91,7 @@ export const AddEditEntry = ({navigation, route}) => {
                 />
                 <TextInput
                     placeholder="Password"
-                    placeholderTextColor="#2f3831"
+                    placeholderTextColor="#8a6e6d"
                     style={styles.inputStyle}
                     value={entry.pw}
                     onChangeText={val =>
@@ -107,19 +107,33 @@ export const AddEditEntry = ({navigation, route}) => {
                 <View style={styles.errorContainer}>
                     <Text style={styles.errorText}>{nameError}</Text>
                 </View>
-                <Button
-                    title="Generate Password"
-                    onPress={() => {
-                        setEntry({
-                            id: entry.id,
-                            name: entry.name,
-                            username: entry.username,
-                            email: entry.email,
-                            pw: generateRandomPw(),
-                        });
+
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                     }}
-                    color="#0225c2"
-                />
+                >
+                    <View style={{marginRight: 5, flex: 0.6}}>
+                        <Button
+                            title="Generate Pw"
+                            onPress={() => {
+                                setEntry({
+                                    id: entry.id,
+                                    name: entry.name,
+                                    username: entry.username,
+                                    email: entry.email,
+                                    pw: generateRandomPw(),
+                                });
+                            }}
+                            color="#0225c2"
+                        />
+                    </View>
+                    <View style={{justifyContent: 'flex-end', flex: 0.4}}>
+                        <Button title="Configure" onPress={() => {}} />
+                    </View>
+                </View>
+
                 <View style={styles.submitButtonWrapper}>
                     <Button
                         title="Submit"
@@ -149,6 +163,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     inputStyle: {
+        color: 'black',
         marginBottom: 20,
         width: 300,
         height: 40,
