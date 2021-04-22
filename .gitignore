@@ -62,3 +62,6 @@ ios/
 
 android/gradle.properties.release
 android/app/my-upload-key.keystore
+
+.editorconfig
+.prettierrc.js
