@@ -1,7 +1,16 @@
 import React, {useState} from 'react';
 import {StyleSheet, View, Text, TextInput, Button} from 'react-native';
+import {RandomPasswordConfiguratorModal} from './RandomPasswordConfiguratorModal';
 
 export const AddEditEntry = ({navigation, route}) => {
+    const [visiblePwModal, setVisiblePwModal] = useState(false);
+    const [includeSpecialCharsPw, setIncludeSpecialCharsPw] = useState(false);
+    const [includeNumbersPw, setIncludeNumbersPw] = useState(true);
+    const [includeCapitalLettersPw, setIncludeCapitalLettersPw] = useState(
+        true,
+    );
+    const [lengthPw, setLengthPw] = useState(16);
+
     const [nameError, setNameError] = useState('');
     const [entry, setEntry] = useState(
         route.params?.row != undefined
@@ -24,12 +33,26 @@ export const AddEditEntry = ({navigation, route}) => {
         }
     }
 
-    function generateRandomPw(pwLength: number = 16) {
+    function generateRandomPw(
+        pwLength: number,
+        useCapitalized: boolean,
+        useSpecialChars: boolean,
+        useNumbers: boolean,
+    ) {
         // Not truly random
+        // A bit expensive to set string 4 times
+        let chars: string = 'abcdefghijklmnopqrstuvwxyz';
+        if (useCapitalized) {
+            chars = chars + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        }
+        if (useSpecialChars) {
+            chars = chars + '!@-#$';
+        }
+        if (useNumbers) {
+            chars = chars + '0123456789';
+        }
         return Array(pwLength)
-            .fill(
-                '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@-#$',
-            )
+            .fill(chars)
             .map(function (x) {
                 return x[Math.floor(Math.random() * x.length)];
             })
@@ -38,6 +61,18 @@ export const AddEditEntry = ({navigation, route}) => {
 
     return (
         <View style={styles.container}>
+            <RandomPasswordConfiguratorModal
+                visible={visiblePwModal}
+                includeSpecialChars={includeSpecialCharsPw}
+                includeNumbers={includeNumbersPw}
+                includeCapitalLetters={includeCapitalLettersPw}
+                passwordLength={lengthPw}
+                setVisible={setVisiblePwModal}
+                setIncludeSpecialChars={setIncludeSpecialCharsPw}
+                setIncludeNumbers={setIncludeNumbersPw}
+                setIncludeCapitalLetters={setIncludeCapitalLettersPw}
+                setPasswordLength={setLengthPw}
+            />
             <View>
                 <Text style={styles.formLabel}>
                     {entry.id == '0' ? 'New' : 'Edit'} Entry
@@ -123,14 +158,24 @@ export const AddEditEntry = ({navigation, route}) => {
                                     name: entry.name,
                                     username: entry.username,
                                     email: entry.email,
-                                    pw: generateRandomPw(),
+                                    pw: generateRandomPw(
+                                        lengthPw,
+                                        includeCapitalLettersPw,
+                                        includeSpecialCharsPw,
+                                        includeNumbersPw,
+                                    ),
                                 });
                             }}
                             color="#0225c2"
                         />
                     </View>
                     <View style={{justifyContent: 'flex-end', flex: 0.4}}>
-                        <Button title="Configure" onPress={() => {}} />
+                        <Button
+                            title="Configure"
+                            onPress={() => {
+                                setVisiblePwModal(true);
+                            }}
+                        />
                     </View>
                 </View>
 
