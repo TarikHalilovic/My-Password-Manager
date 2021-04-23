@@ -40,10 +40,7 @@ export const RandomPasswordConfiguratorModal = ({
                                 title="Include numbers"
                                 checked={includeNumbers}
                                 onPress={() =>
-                                    setIncludeNumbers(
-                                        (includeNumbers: boolean) =>
-                                            !includeNumbers,
-                                    )
+                                    setIncludeNumbers(!includeNumbers)
                                 }
                                 checkedColor="red"
                             />

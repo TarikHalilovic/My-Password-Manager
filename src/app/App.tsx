@@ -5,8 +5,8 @@ import type {ReactNode} from 'react';
 
 import {AppState} from 'react-native';
 
-import {MyNavigationContainer} from '../components/MyNavigationContainer';
-import {ProtectedComponent} from '../components/ProtectedComponent';
+import {MyNavigationContainer} from '../components/WrapperScreen/MyNavigationContainer';
+import {ProtectedComponent} from '../components/WrapperScreen/ProtectedComponent';
 
 import * as LocalAuthentication from 'expo-local-authentication';
 

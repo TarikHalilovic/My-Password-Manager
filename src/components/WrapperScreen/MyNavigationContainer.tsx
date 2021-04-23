@@ -4,11 +4,11 @@ import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import {MainScreen} from '../components/MainScreen';
-import {AddEditEntry} from '../components/AddEditEntry';
-import {Settings} from '../components/Settings';
-import {DataProtection} from '../components/DataProtection';
-import {Backups} from '../components/Backups';
+import {MainScreen} from '../MainScreen/MainScreen';
+import {AddEditEntry} from '../AddEditScreen/AddEditEntry';
+import {Settings} from '../SettingsScreen/Settings';
+import {DataProtection} from '../SettingsScreen/DataProtection';
+import {Backups} from '../SettingsScreen/Backups';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 

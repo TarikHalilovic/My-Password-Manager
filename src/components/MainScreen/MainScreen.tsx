@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {SearchBar} from 'react-native-elements';
-import {StyleSheet, View, Alert} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {MyTable} from './MyTable';
 import {ConfirmDeleteDialog} from './ConfirmDeleteDialog';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {MMKVService} from '../service/MMKVService';
+import {MMKVService} from '../../service/MMKVService';
 
 export const MainScreen = ({navigation, route}) => {
     const [storageService, setStorageService] = useState(null);
