@@ -57,9 +57,33 @@ export const MyNavigationContainer = () => {
     return (
         <NavigationContainer
             initialState={initialState}
-            onStateChange={state =>
-                AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-            }
+            onStateChange={state => {
+                let stateCopy = null;
+                if (state.routes != null) {
+                    for (let i = 0; i < state.routes.length; i++) {
+                        if (state.routes[i].name == 'MainScreen') {
+                            stateCopy = Object.assign({}, state);
+                            // Delete params on MainScreen because
+                            // addEditEntry runs if there is Entry object in params
+                            // AddEdit function shouldnt run when returning from inactive
+                            // Cloning state is expensive workaround tho
+                            delete stateCopy.routes[i].params;
+                            break;
+                        }
+                    }
+                }
+                if (stateCopy != null) {
+                    AsyncStorage.setItem(
+                        PERSISTENCE_KEY,
+                        JSON.stringify(stateCopy),
+                    );
+                } else {
+                    AsyncStorage.setItem(
+                        PERSISTENCE_KEY,
+                        JSON.stringify(state),
+                    );
+                }
+            }}
         >
             <SafeAreaView style={styles.container}>
                 <StatusBar />
