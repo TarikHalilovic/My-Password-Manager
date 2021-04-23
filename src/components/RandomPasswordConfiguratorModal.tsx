@@ -40,7 +40,10 @@ export const RandomPasswordConfiguratorModal = ({
                                 title="Include numbers"
                                 checked={includeNumbers}
                                 onPress={() =>
-                                    setIncludeNumbers(!includeNumbers)
+                                    setIncludeNumbers(
+                                        (includeNumbers: boolean) =>
+                                            !includeNumbers,
+                                    )
                                 }
                                 checkedColor="red"
                             />
@@ -52,7 +55,9 @@ export const RandomPasswordConfiguratorModal = ({
                                 title="Include capital letters"
                                 checked={includeCapitalLetters}
                                 onPress={() =>
-                                    setIncludeCapitalLetters(!includeNumbers)
+                                    setIncludeCapitalLetters(
+                                        !includeCapitalLetters,
+                                    )
                                 }
                                 checkedColor="red"
                             />
@@ -64,7 +69,7 @@ export const RandomPasswordConfiguratorModal = ({
                                 title="Include special characters"
                                 checked={includeSpecialChars}
                                 onPress={() =>
-                                    setIncludeSpecialChars(!includeNumbers)
+                                    setIncludeSpecialChars(!includeSpecialChars)
                                 }
                                 checkedColor="red"
                             />
