@@ -18,7 +18,53 @@ export const MMKVService = {
     getProtectionTypeAsync,
     setPasswordAsync,
     getPasswordAsync,
+    restoreFromBackupFileAsync,
 };
+
+async function restoreFromBackupFileAsync(
+    entries: Array<{
+        id: string;
+        name: string;
+        username: string;
+        pw: string;
+        email: string;
+    }>,
+) {
+    let cleanedEntries = [];
+    let cleanedKeys = [];
+    let nextKey = await storage.getIntAsync('nextId');
+    // prepare data for import
+    entries.forEach(element => {
+        const newKey = nextKey.toString();
+        const newEntry = {
+            id: newKey,
+            name: element.name,
+            username: element.username,
+            pw: element.pw,
+            email: element.email,
+        };
+        cleanedEntries.push(newEntry);
+        cleanedKeys.push(newKey);
+        nextKey += 1;
+    });
+
+    const currentlyStoredEntries = await getAllEntriesAsync();
+    const currentlyStoredKeys = await storage.getArrayAsync('allEntryKeys');
+
+    if (currentlyStoredKeys == null || currentlyStoredEntries.length == 0) {
+        await storage.setArrayAsync('allEntryKeys', cleanedKeys);
+    } else {
+        await storage.setArrayAsync('allEntryKeys', [
+            ...currentlyStoredKeys,
+            ...cleanedKeys,
+        ]);
+    }
+    for (let i = 0; i < cleanedEntries.length; i++) {
+        await storage.setMapAsync(cleanedEntries[i].id, cleanedEntries[i]);
+    }
+
+    await storage.setIntAsync('nextId', nextKey);
+}
 
 async function setProtectionTypeAsync(protectionType: ProtectionType) {
     await storage.setIntAsync('protectionType', protectionType);
