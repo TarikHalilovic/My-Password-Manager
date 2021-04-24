@@ -2,10 +2,12 @@ import React from 'react';
 
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-export const ProtectedComponent = ({fingerprintAuthenticate}) => {
+export const ProtectedComponent = ({authenticate}) => {
     return (
         <TouchableOpacity
-            onPress={() => fingerprintAuthenticate()}
+            onPress={() => {
+                authenticate();
+            }}
             style={styles.unauthorized}
         >
             <Text style={[styles.notAllowedLabels, styles.unauthorizedLabel]}>

@@ -7,8 +7,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {MainScreen} from '../MainScreen/MainScreen';
 import {AddEditEntry} from '../AddEditScreen/AddEditEntry';
 import {Settings} from '../SettingsScreen/Settings';
-import {DataProtection} from '../SettingsScreen/DataProtection';
-import {Backups} from '../SettingsScreen/Backups';
+import {DataProtection} from '../SettingsScreen/DataProtection/DataProtection';
+import {Backups} from '../SettingsScreen/Backups/Backups';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 

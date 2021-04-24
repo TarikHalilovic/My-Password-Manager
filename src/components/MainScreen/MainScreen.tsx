@@ -9,24 +9,22 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {MMKVService} from '../../service/MMKVService';
 
 export const MainScreen = ({navigation, route}) => {
-    const [storageService, setStorageService] = useState(null);
     const [data, setData] = useState([]);
     const [visibleData, setVisibleData] = useState([]);
     const [showConfirmDeleteDialog, setShowConfirmDeleteDialog] = useState(
         false,
     );
     const [deleteId, setDeleteId] = useState('-1');
+    const [searchText, setSearchText] = useState('');
+    const [lastEntryInAction, setLastEntryInAction] = useState(null);
 
     useEffect(() => {
-        const service = MMKVService.initialize();
-        setStorageService(service);
-        MMKVService.getAllAsync(service).then(result => {
+        MMKVService.getAllEntriesAsync().then(result => {
             setData(result);
             setVisibleData(result);
         });
     }, []);
 
-    const [lastEntryInAction, setLastEntryInAction] = useState(null);
     let entry: {
         id: string;
         name: string;
@@ -34,8 +32,6 @@ export const MainScreen = ({navigation, route}) => {
         email: string;
         pw: string;
     } = route.params?.entry;
-
-    const [searchText, setSearchText] = useState('');
 
     function onChangeSearch(textValue: string) {
         setSearchText(textValue);
@@ -61,7 +57,7 @@ export const MainScreen = ({navigation, route}) => {
     function deleteEntryFinalize(rowId: string) {
         if (rowId == '-1') return;
 
-        MMKVService.removeAsync(storageService, rowId);
+        MMKVService.removeEntryAsync(rowId);
 
         setData(data.filter(x => x.id != rowId));
         let searchTextLower = searchText.toLowerCase();
@@ -85,7 +81,7 @@ export const MainScreen = ({navigation, route}) => {
         let newData: any;
         if (entry.id == '0') {
             let newId: string = null;
-            MMKVService.addAsync(storageService, entry).then(id => {
+            MMKVService.addEntryAsync(entry).then(id => {
                 newId = id;
             });
             entry.id = newId;
@@ -93,7 +89,7 @@ export const MainScreen = ({navigation, route}) => {
             newData = [entry, ...data];
             setData(newData);
         } else {
-            MMKVService.edit(storageService, entry);
+            MMKVService.editEntry(entry);
             newData = [entry, ...data.filter(x => x.id != entry.id)];
             setData(newData);
         }
@@ -110,8 +106,8 @@ export const MainScreen = ({navigation, route}) => {
             entry.email != lastEntryInAction.email ||
             entry.pw != lastEntryInAction.pw)
     ) {
-        addEditEntry(entry);
         setLastEntryInAction(entry);
+        addEditEntry(entry);
     }
 
     return (

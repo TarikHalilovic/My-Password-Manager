@@ -1,15 +1,31 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Switch, StyleSheet, Text, ToastAndroid} from 'react-native';
 
 import {ChooseProtectionTypeModal} from './ChooseProtectionTypeModal';
 
+import {MMKVService} from '../../../service/MMKVService';
+
+import {ProtectionType} from '../../../helpers/ProtectionType';
+
 export const DataProtection = () => {
-    // use stored value later
-    const [isProtectionEnabled, setIsProtectionEnabled] = useState(false);
+    const [isProtectionEnabled, setIsProtectionEnabled] = useState(null);
     const [
         isProtectionTypeModalVisible,
         setIsProtectionTypeModalVisible,
     ] = useState(false);
+
+    useEffect(() => {
+        MMKVService.getProtectionTypeAsync().then(result => {
+            if (result == null || result == ProtectionType.DISABLED) {
+                setIsProtectionEnabled(false);
+            } else {
+                setIsProtectionEnabled(true);
+            }
+        });
+    }, []);
+
+    if (isProtectionEnabled == null) return null;
+
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
@@ -46,10 +62,7 @@ export const DataProtection = () => {
                                 isProtectionEnabled ? '#1e6deb' : '#f4f3f4'
                             }
                             onValueChange={() => {
-                                //setIsProtectionEnabled(!isProtectionEnabled);
-                                if (!isProtectionEnabled) {
-                                    setIsProtectionTypeModalVisible(true);
-                                }
+                                setIsProtectionTypeModalVisible(true);
                             }}
                             value={isProtectionEnabled}
                         />
@@ -59,11 +72,7 @@ export const DataProtection = () => {
             <View style={styles.modalContainer}>
                 {isProtectionTypeModalVisible ? (
                     <ChooseProtectionTypeModal
-                        isProtectionEnabled={isProtectionEnabled}
                         setIsProtectionEnabled={setIsProtectionEnabled}
-                        isProtectionTypeModalVisible={
-                            isProtectionTypeModalVisible
-                        }
                         setIsProtectionTypeModalVisible={
                             setIsProtectionTypeModalVisible
                         }

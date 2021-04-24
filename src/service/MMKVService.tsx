@@ -1,44 +1,62 @@
-// https://rnmmkv.vercel.app/#/callbackapi
+// https://rnmmkv.vercel.app/#/
 
 import MMKVStorage from 'react-native-mmkv-storage';
+import {ProtectionType} from '../helpers/ProtectionType';
+
+const storage = new MMKVStorage.Loader()
+    .withInstanceID('mymkkvinstance-1')
+    .setProcessingMode(MMKVStorage.MODES.MULTI_PROCESS)
+    .withEncryption()
+    .initialize();
 
 export const MMKVService = {
-    initialize,
-    getAllAsync,
-    addAsync,
-    removeAsync,
-    edit,
+    getAllEntriesAsync,
+    addEntryAsync,
+    removeEntryAsync,
+    editEntry,
+    setProtectionTypeAsync,
+    getProtectionTypeAsync,
+    setPasswordAsync,
+    getPasswordAsync,
 };
 
-function initialize() {
-    return new MMKVStorage.Loader()
-        .withInstanceID('mymkkvinstance-1')
-        .setProcessingMode(MMKVStorage.MODES.MULTI_PROCESS)
-        .withEncryption()
-        .initialize();
+async function setProtectionTypeAsync(protectionType: ProtectionType) {
+    await storage.setIntAsync('protectionType', protectionType);
 }
 
-async function getAllAsync(storage: MMKVStorage.API) {
+async function setPasswordAsync(password: string) {
+    await storage.setStringAsync('password', password);
+}
+
+async function getProtectionTypeAsync() {
+    return await storage.getIntAsync('protectionType');
+}
+
+async function getPasswordAsync() {
+    return await storage.getStringAsync('password');
+}
+
+async function getAllEntriesAsync() {
     let data: Array<object> = [];
 
     let keys = await storage.getArrayAsync('allEntryKeys');
     if (keys != null) {
         keys.forEach(async key => {
-            // TODO: GetMultiple doesnt work for now add fix when fixed
+            // TODO: GetMultiple doesnt work for now; add fix when fixed
             let item = await storage.getMapAsync(key);
             if (item != null) data.push(item);
         });
         return data;
     }
 
-    return [];
+    return data;
 }
 
-function edit(storage: MMKVStorage.API, entry: {id: string}) {
+function editEntry(entry: {id: string}) {
     storage.setMap(entry.id, entry);
 }
 
-async function addAsync(storage: MMKVStorage.API, entry: {id: string}) {
+async function addEntryAsync(entry: {id: string}) {
     let cleanKey: string;
 
     const key = await storage.getIntAsync('nextId');
@@ -64,7 +82,7 @@ async function addAsync(storage: MMKVStorage.API, entry: {id: string}) {
     return cleanKey;
 }
 
-async function removeAsync(storage: MMKVStorage.API, id: string) {
+async function removeEntryAsync(id: string) {
     const allKeys = await storage.getArrayAsync('allEntryKeys');
 
     if (allKeys != null) {
