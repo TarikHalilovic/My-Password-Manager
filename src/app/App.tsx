@@ -47,7 +47,11 @@ const App: () => ReactNode = () => {
 
     useEffect(() => {
         MMKVService.getProtectionTypeAsync().then(r => {
-            setProtectionType(r);
+            if (r == null) {
+                setProtectionType(ProtectionType.DISABLED);
+            } else {
+                setProtectionType(r);
+            }
             if (r == ProtectionType.PASSWORD) {
                 MMKVService.getPasswordAsync().then(rPw => {
                     setPassword(rPw);
