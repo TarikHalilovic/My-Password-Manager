@@ -5,6 +5,7 @@ import {
     Text,
     TouchableOpacity,
     ToastAndroid,
+    Pressable,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Divider} from 'react-native-elements';
@@ -14,7 +15,7 @@ export const Row = ({navigation, row, deleteAction}) => {
     function copyToClipboard(text: string) {
         if (text != '') {
             Clipboard.setString(text);
-            ToastAndroid.show('Item copied to clipboard.', ToastAndroid.SHORT);
+            ToastAndroid.show('Item copied to clipboard', ToastAndroid.SHORT);
         }
     }
 
@@ -40,26 +41,34 @@ export const Row = ({navigation, row, deleteAction}) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.rightRowContainer}>
-                    <View>
-                        <Icon.Button
-                            name="edit"
-                            backgroundColor="blue"
-                            onPress={() =>
-                                navigation.navigate('AddEditEntry', {row})
-                            }
-                        >
-                            Edit
-                        </Icon.Button>
-                    </View>
-                    <View>
-                        <Icon.Button
-                            name="trash"
-                            backgroundColor="red"
-                            onPress={() => deleteAction(row.id)}
-                        >
-                            Delete
-                        </Icon.Button>
-                    </View>
+                    <Pressable
+                        style={({pressed}) => [
+                            {
+                                backgroundColor: pressed ? '#667069' : 'black',
+                            },
+                            styles.button,
+                        ]}
+                        onPress={() =>
+                            navigation.navigate('AddEditEntry', {row})
+                        }
+                    >
+                        <Text style={{color: 'white'}}>
+                            <Icon name="edit" size={19}></Icon>
+                        </Text>
+                    </Pressable>
+                    <Pressable
+                        style={({pressed}) => [
+                            {
+                                backgroundColor: pressed ? '#667069' : 'black',
+                            },
+                            styles.button,
+                        ]}
+                        onPress={() => deleteAction(row.id)}
+                    >
+                        <Text style={{color: 'white'}}>
+                            <Icon name="trash" size={19}></Icon>
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
             <Divider style={styles.myDivider} />
@@ -73,7 +82,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     myDivider: {
-        //backgroundColor: 'black',
         backgroundColor: '#323332',
         marginTop: 5,
         marginBottom: 2,
@@ -87,9 +95,18 @@ const styles = StyleSheet.create({
     leftRowContainer: {
         marginLeft: 7,
         justifyContent: 'flex-start',
+        flex: 0.85,
     },
     rightRowContainer: {
         marginRight: 7,
         justifyContent: 'flex-end',
+        flex: 0.15,
+    },
+    button: {
+        marginTop: 5,
+        marginBottom: 5,
+        //backgroundColor: 'red',
+        padding: 4,
+        height: 35,
     },
 });
