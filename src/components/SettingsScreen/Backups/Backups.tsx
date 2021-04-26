@@ -1,17 +1,19 @@
 import React from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    Pressable,
-    ToastAndroid,
-    Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, Pressable, ToastAndroid} from 'react-native';
 
 import * as RNFS from 'react-native-fs';
 import {MMKVService} from '../../../service/MMKVService';
 
+import {MyDialog} from '../../general/MyDialog';
+
 export const Backups = () => {
+    const [isDialogExportVisible, setIsDialogExportVisible] = React.useState(
+        false,
+    );
+    const [isDialogImportVisible, setIsDialogImportVisible] = React.useState(
+        false,
+    );
+
     const exportBackup = async () => {
         try {
             // Get all entries from storage
@@ -84,13 +86,54 @@ export const Backups = () => {
 
             ToastAndroid.show('Backup restored', 2500);
         } catch (err) {
-            console.log(err);
             ToastAndroid.show(`Error: ${err}`, ToastAndroid.LONG);
         }
     };
 
     return (
         <View style={styles.container}>
+            <MyDialog
+                showDialog={isDialogExportVisible}
+                setShowDialog={setIsDialogExportVisible}
+                title="WARNING"
+                description="Backups are exported without encryption. Do you wish to continue?"
+                buttonConfigs={[
+                    {
+                        label: 'Cancel',
+                        onPress: () => {
+                            setIsDialogExportVisible(false);
+                        },
+                    },
+                    {
+                        label: 'OK',
+                        onPress: () => {
+                            exportBackup();
+                            setIsDialogExportVisible(false);
+                        },
+                    },
+                ]}
+            />
+            <MyDialog
+                showDialog={isDialogImportVisible}
+                setShowDialog={setIsDialogImportVisible}
+                title="WARNING"
+                description="Import will attempt to restore ALL backup files located at /android/data/mypwmanager/files ! Are you sure you want to continue? (No entries will be deleted)"
+                buttonConfigs={[
+                    {
+                        label: 'Cancel',
+                        onPress: () => {
+                            setIsDialogImportVisible(false);
+                        },
+                    },
+                    {
+                        label: 'OK',
+                        onPress: () => {
+                            importBackup();
+                            setIsDialogImportVisible(false);
+                        },
+                    },
+                ]}
+            />
             <Pressable
                 style={({pressed}) => [
                     {
@@ -98,20 +141,7 @@ export const Backups = () => {
                     },
                     styles.wrapperCustom,
                 ]}
-                onPress={() => {
-                    Alert.alert(
-                        'WARNING',
-                        `Backups are exported without encryption. Do you wish to continue?`,
-                        [
-                            {
-                                text: 'Cancel',
-                                onPress: () => {},
-                                style: 'cancel',
-                            },
-                            {text: 'OK', onPress: () => exportBackup()},
-                        ],
-                    );
-                }}
+                onPress={() => setIsDialogExportVisible(true)}
             >
                 <Text style={styles.menuOptionsText}>Export</Text>
             </Pressable>
@@ -122,20 +152,7 @@ export const Backups = () => {
                     },
                     styles.wrapperCustom,
                 ]}
-                onPress={() => {
-                    Alert.alert(
-                        'WARNING',
-                        `Import will attempt to restore ALL backup files located at /android/data/mypwmanager/files ! Are you sure you want to continue? (No entries will be deleted)`,
-                        [
-                            {
-                                text: 'Cancel',
-                                onPress: () => {},
-                                style: 'cancel',
-                            },
-                            {text: 'OK', onPress: () => importBackup()},
-                        ],
-                    );
-                }}
+                onPress={() => setIsDialogImportVisible(true)}
             >
                 <Text style={styles.menuOptionsText}>Import</Text>
             </Pressable>
