@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, Button} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    TextInput,
+    Button,
+    ScrollView,
+    SafeAreaView,
+} from 'react-native';
 import {RandomPasswordConfiguratorModal} from './RandomPasswordConfiguratorModal';
 
 export const AddEditEntry = ({navigation, route}) => {
@@ -60,147 +68,151 @@ export const AddEditEntry = ({navigation, route}) => {
     }
 
     return (
-        <View style={styles.container}>
-            <RandomPasswordConfiguratorModal
-                visible={visiblePwModal}
-                includeSpecialChars={includeSpecialCharsPw}
-                includeNumbers={includeNumbersPw}
-                includeCapitalLetters={includeCapitalLettersPw}
-                passwordLength={lengthPw}
-                setVisible={setVisiblePwModal}
-                setIncludeSpecialChars={setIncludeSpecialCharsPw}
-                setIncludeNumbers={setIncludeNumbersPw}
-                setIncludeCapitalLetters={setIncludeCapitalLettersPw}
-                setPasswordLength={setLengthPw}
-            />
-            <View>
-                <Text style={styles.formLabel}>
-                    {entry.id == '0' ? 'New' : 'Edit'} Entry
-                </Text>
-            </View>
-            <View>
-                <TextInput
-                    placeholder="Service name/url"
-                    placeholderTextColor="#8a6e6d"
-                    style={styles.inputStyle}
-                    value={entry.name}
-                    onChangeText={val =>
-                        setEntry({
-                            id: entry.id,
-                            name: val,
-                            username: entry.username,
-                            email: entry.email,
-                            pw: entry.pw,
-                        })
-                    }
+        <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <RandomPasswordConfiguratorModal
+                    visible={visiblePwModal}
+                    includeSpecialChars={includeSpecialCharsPw}
+                    includeNumbers={includeNumbersPw}
+                    includeCapitalLetters={includeCapitalLettersPw}
+                    passwordLength={lengthPw}
+                    setVisible={setVisiblePwModal}
+                    setIncludeSpecialChars={setIncludeSpecialCharsPw}
+                    setIncludeNumbers={setIncludeNumbersPw}
+                    setIncludeCapitalLetters={setIncludeCapitalLettersPw}
+                    setPasswordLength={setLengthPw}
                 />
-                <TextInput
-                    placeholder="Username"
-                    placeholderTextColor="#8a6e6d"
-                    style={styles.inputStyle}
-                    value={entry.username}
-                    onChangeText={val =>
-                        setEntry({
-                            id: entry.id,
-                            name: entry.name,
-                            username: val,
-                            email: entry.email,
-                            pw: entry.pw,
-                        })
-                    }
-                />
-                <TextInput
-                    placeholder="Email"
-                    placeholderTextColor="#8a6e6d"
-                    style={styles.inputStyle}
-                    value={entry.email}
-                    onChangeText={val =>
-                        setEntry({
-                            id: entry.id,
-                            name: entry.name,
-                            username: entry.username,
-                            email: val,
-                            pw: entry.pw,
-                        })
-                    }
-                />
-                <TextInput
-                    placeholder="Password"
-                    placeholderTextColor="#8a6e6d"
-                    style={styles.inputStyle}
-                    value={entry.pw}
-                    onChangeText={val =>
-                        setEntry({
-                            id: entry.id,
-                            name: entry.name,
-                            username: entry.username,
-                            email: entry.email,
-                            pw: val,
-                        })
-                    }
-                />
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{nameError}</Text>
+                <View>
+                    <Text style={styles.formLabel}>
+                        {entry.id == '0' ? 'New' : 'Edit'} Entry
+                    </Text>
                 </View>
-
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <View style={{marginRight: 5, flex: 0.6}}>
-                        <Button
-                            title="Generate Pw"
-                            onPress={() => {
-                                setEntry({
-                                    id: entry.id,
-                                    name: entry.name,
-                                    username: entry.username,
-                                    email: entry.email,
-                                    pw: generateRandomPw(
-                                        lengthPw,
-                                        includeCapitalLettersPw,
-                                        includeSpecialCharsPw,
-                                        includeNumbersPw,
-                                    ),
-                                });
-                            }}
-                            color="#0225c2"
-                        />
-                    </View>
-                    <View style={{justifyContent: 'flex-end', flex: 0.4}}>
-                        <Button
-                            title="Configure"
-                            onPress={() => {
-                                setVisiblePwModal(true);
-                            }}
-                        />
-                    </View>
-                </View>
-
-                <View style={styles.submitButtonWrapper}>
-                    <Button
-                        title="Submit"
-                        onPress={() => {
-                            if (validate()) {
-                                navigation.navigate('MainScreen', {entry});
-                            }
-                        }}
+                <View>
+                    <TextInput
+                        placeholder="Service name/url"
+                        placeholderTextColor="#8a6e6d"
+                        style={styles.inputStyle}
+                        value={entry.name}
+                        onChangeText={val =>
+                            setEntry({
+                                id: entry.id,
+                                name: val,
+                                username: entry.username,
+                                email: entry.email,
+                                pw: entry.pw,
+                            })
+                        }
                     />
+                    <TextInput
+                        placeholder="Username"
+                        placeholderTextColor="#8a6e6d"
+                        style={styles.inputStyle}
+                        value={entry.username}
+                        onChangeText={val =>
+                            setEntry({
+                                id: entry.id,
+                                name: entry.name,
+                                username: val,
+                                email: entry.email,
+                                pw: entry.pw,
+                            })
+                        }
+                    />
+                    <TextInput
+                        placeholder="Email"
+                        placeholderTextColor="#8a6e6d"
+                        style={styles.inputStyle}
+                        value={entry.email}
+                        onChangeText={val =>
+                            setEntry({
+                                id: entry.id,
+                                name: entry.name,
+                                username: entry.username,
+                                email: val,
+                                pw: entry.pw,
+                            })
+                        }
+                    />
+                    <TextInput
+                        placeholder="Password"
+                        placeholderTextColor="#8a6e6d"
+                        style={styles.inputStyle}
+                        value={entry.pw}
+                        onChangeText={val =>
+                            setEntry({
+                                id: entry.id,
+                                name: entry.name,
+                                username: entry.username,
+                                email: entry.email,
+                                pw: val,
+                            })
+                        }
+                    />
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{nameError}</Text>
+                    </View>
+
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <View style={{marginRight: 5, flex: 0.6}}>
+                            <Button
+                                title="Generate Pw"
+                                onPress={() => {
+                                    setEntry({
+                                        id: entry.id,
+                                        name: entry.name,
+                                        username: entry.username,
+                                        email: entry.email,
+                                        pw: generateRandomPw(
+                                            lengthPw,
+                                            includeCapitalLettersPw,
+                                            includeSpecialCharsPw,
+                                            includeNumbersPw,
+                                        ),
+                                    });
+                                }}
+                                color="#0225c2"
+                            />
+                        </View>
+                        <View style={{justifyContent: 'flex-end', flex: 0.4}}>
+                            <Button
+                                title="Configure"
+                                onPress={() => {
+                                    setVisiblePwModal(true);
+                                }}
+                            />
+                        </View>
+                    </View>
+
+                    <View style={styles.submitButtonWrapper}>
+                        <Button
+                            title="Submit"
+                            onPress={() => {
+                                if (validate()) {
+                                    navigation.navigate('MainScreen', {entry});
+                                }
+                            }}
+                        />
+                    </View>
                 </View>
-            </View>
-        </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    scrollContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexGrow: 1,
+    },
     container: {
         flex: 1,
         backgroundColor: 'black',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 50,
     },
     formLabel: {
         fontSize: 17,
