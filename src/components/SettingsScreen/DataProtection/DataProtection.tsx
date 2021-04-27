@@ -8,7 +8,7 @@ import {MMKVService} from '../../../service/MMKVService';
 import {ProtectionType} from '../../../helpers/ProtectionType';
 
 export const DataProtection = () => {
-    const [isProtectionEnabled, setIsProtectionEnabled] = useState(null);
+    const [isProtectionEnabled, setIsProtectionEnabled] = useState(false);
     const [
         isProtectionTypeModalVisible,
         setIsProtectionTypeModalVisible,
@@ -24,7 +24,10 @@ export const DataProtection = () => {
         });
     }, []);
 
-    if (isProtectionEnabled == null) return null;
+    // causing flash if animation is disabled in stack navigator; set to false initially as a workaround
+    //if (isProtectionEnabled == null) {
+    //    return null;
+    //}
 
     return (
         <View style={styles.container}>

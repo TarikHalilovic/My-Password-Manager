@@ -90,6 +90,7 @@ export const MyNavigationContainer = () => {
                 <Stack.Navigator
                     screenOptions={{
                         headerStyle: {backgroundColor: 'black'},
+                        animationEnabled: false,
                     }}
                 >
                     <Stack.Screen
