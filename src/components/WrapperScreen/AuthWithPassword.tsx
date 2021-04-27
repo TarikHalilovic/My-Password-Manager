@@ -41,9 +41,10 @@ export const AuthWithPassword = ({
                         } else if (pwEntry != password) {
                             setError('Invalid password');
                         } else {
+                            setError('');
                             setPwEntry('');
-                            setAllowed(true);
                             setIsVisible(false);
+                            setAllowed(true);
                         }
                     }}
                 >
