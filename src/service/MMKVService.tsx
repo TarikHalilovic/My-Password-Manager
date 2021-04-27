@@ -4,7 +4,7 @@ import MMKVStorage from 'react-native-mmkv-storage';
 import {ProtectionType} from '../helpers/ProtectionType';
 
 const storage = new MMKVStorage.Loader()
-    .withInstanceID('mymkkvinstance-1')
+    .withInstanceID('mymmkvinstance-1')
     .setProcessingMode(MMKVStorage.MODES.MULTI_PROCESS)
     .withEncryption()
     .initialize();
@@ -32,7 +32,12 @@ async function restoreFromBackupFileAsync(
 ) {
     let cleanedEntries = [];
     let cleanedKeys = [];
+
     let nextKey = await storage.getIntAsync('nextId');
+    if (!nextKey) {
+        nextKey = 1;
+    }
+
     // prepare data for import
     entries.forEach(element => {
         const newKey = nextKey.toString();
