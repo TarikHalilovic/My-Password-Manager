@@ -14,6 +14,12 @@ export const Backups = () => {
         false,
     );
 
+    const createBackupDirAsync = async () => {
+        const dirs = await RNFS.readdir(RNFS.ExternalDirectoryPath);
+        if (!dirs.includes('backups')) {
+            await RNFS.mkdir(RNFS.ExternalDirectoryPath + '/backups');
+        }
+    };
     const exportBackup = async () => {
         try {
             // Get all entries from storage
@@ -27,14 +33,16 @@ export const Backups = () => {
             }
 
             // check if backup directory exists and create it if it doesnt
-            const dirs = await RNFS.readdir(RNFS.ExternalDirectoryPath);
-            if (!dirs.includes('backups')) {
-                await RNFS.mkdir(RNFS.ExternalDirectoryPath + '/backups');
-            }
+            // const dirs = await RNFS.readdir(RNFS.ExternalDirectoryPath);
+            // if (!dirs.includes('backups')) {
+            //     await RNFS.mkdir(RNFS.ExternalDirectoryPath + '/backups');
+            // }
+            const _createBackupDir = createBackupDirAsync();
+
             const jsonedResult = JSON.stringify(resultAsObjectArray);
 
             // name backup file; stored at ExternalDirectoryPath/backups
-            // TODO: this could overwrite file so find something better; or make user pick file properly
+            // TODO: this could overwrite file so find something better; or make user pick file properly; or check against file names in dir
             const fileName = `${Array(16)
                 .fill('abcdefghijklmnopqrstuvwxyz0123456789')
                 .map(function (x) {
@@ -42,6 +50,7 @@ export const Backups = () => {
                 })
                 .join('')}.json`;
 
+            await _createBackupDir;
             await RNFS.writeFile(
                 RNFS.ExternalDirectoryPath + `/backups/${fileName}`,
                 jsonedResult,
