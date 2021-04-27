@@ -47,11 +47,6 @@ const App: () => ReactNode = () => {
 
     useEffect(() => {
         MMKVService.getProtectionTypeAsync().then(r => {
-            if (r == null) {
-                setProtectionType(ProtectionType.DISABLED);
-            } else {
-                setProtectionType(r);
-            }
             if (r == ProtectionType.PASSWORD) {
                 MMKVService.getPasswordAsync().then(rPw => {
                     setPassword(rPw);
@@ -60,8 +55,12 @@ const App: () => ReactNode = () => {
             } else if (r == ProtectionType.FINGERPRINT) {
                 fingerprintAuthenticate();
             } else {
+                if (r == null) {
+                    r = ProtectionType.DISABLED;
+                }
                 setAllowed(true);
             }
+            setProtectionType(r);
         });
         AppState.addEventListener('change', _handleAppStateChange);
         return () => {
@@ -78,12 +77,12 @@ const App: () => ReactNode = () => {
     }
 
     function authenticate() {
-        if (protectionType == null) return;
-        else if (protectionType == ProtectionType.PASSWORD) {
+        if (protectionType == ProtectionType.PASSWORD) {
             passwordAuthenticate();
         } else if (protectionType == ProtectionType.FINGERPRINT) {
             fingerprintAuthenticate();
-        } else if (protectionType == ProtectionType.DISABLED) {
+            //} else if (protectionType == ProtectionType.DISABLED) {
+        } else {
             setAllowed(true);
         }
     }
