@@ -44,9 +44,9 @@ async function restoreFromBackupFileAsync(
         const newEntry = {
             id: newKey,
             name: element.name,
-            username: element.username,
-            pw: element.pw,
-            email: element.email,
+            username: element.username ? element.username : '',
+            pw: element.pw ? element.pw : '',
+            email: element.email ? element.email : '',
         };
         cleanedEntries.push(newEntry);
         cleanedKeys.push(newKey);
