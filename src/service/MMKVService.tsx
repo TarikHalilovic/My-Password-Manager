@@ -3,6 +3,14 @@
 import MMKVStorage from 'react-native-mmkv-storage';
 import {ProtectionType} from '../helpers/ProtectionType';
 
+const key = {
+    navigationKey: 'NAVIGATION_STATE',
+    nextIdKey: 'NEXT_ID',
+    protectionTypeKey: 'PROTECTION_TYPE',
+    allEntriesKeyArrayKey: 'ALL_ENTRIES_KEY_ARRAY',
+    passwordKey: 'PASSWORD',
+};
+
 const storage = new MMKVStorage.Loader()
     .withInstanceID('mymmkvinstance-1')
     .setProcessingMode(MMKVStorage.MODES.MULTI_PROCESS)
@@ -19,7 +27,16 @@ export const MMKVService = {
     setPasswordAsync,
     getPasswordAsync,
     restoreFromBackupFileAsync,
+    setNavigationState,
+    getNavigationState,
 };
+
+function setNavigationState(navigationState: object) {
+    storage.setMap(key.navigationKey, navigationState);
+}
+function getNavigationState() {
+    return storage.getMap(key.navigationKey);
+}
 
 async function restoreFromBackupFileAsync(
     entries: Array<{
@@ -33,7 +50,7 @@ async function restoreFromBackupFileAsync(
     let cleanedEntries = [];
     let cleanedKeys = [];
 
-    let nextKey = await storage.getIntAsync('nextId');
+    let nextKey = await storage.getIntAsync(key.nextIdKey);
     if (!nextKey) {
         nextKey = 1;
     }
@@ -54,12 +71,14 @@ async function restoreFromBackupFileAsync(
     });
 
     const currentlyStoredEntries = await getAllEntriesAsync();
-    const currentlyStoredKeys = await storage.getArrayAsync('allEntryKeys');
+    const currentlyStoredKeys = await storage.getArrayAsync(
+        key.allEntriesKeyArrayKey,
+    );
 
     if (currentlyStoredKeys == null || currentlyStoredEntries.length == 0) {
-        await storage.setArrayAsync('allEntryKeys', cleanedKeys);
+        await storage.setArrayAsync(key.allEntriesKeyArrayKey, cleanedKeys);
     } else {
-        await storage.setArrayAsync('allEntryKeys', [
+        await storage.setArrayAsync(key.allEntriesKeyArrayKey, [
             ...currentlyStoredKeys,
             ...cleanedKeys,
         ]);
@@ -68,29 +87,29 @@ async function restoreFromBackupFileAsync(
         await storage.setMapAsync(cleanedEntries[i].id, cleanedEntries[i]);
     }
 
-    await storage.setIntAsync('nextId', nextKey);
+    await storage.setIntAsync(key.nextIdKey, nextKey);
 }
 
 async function setProtectionTypeAsync(protectionType: ProtectionType) {
-    await storage.setIntAsync('protectionType', protectionType);
+    await storage.setIntAsync(key.protectionTypeKey, protectionType);
 }
 
 async function setPasswordAsync(password: string) {
-    await storage.setStringAsync('password', password);
+    await storage.setStringAsync(key.passwordKey, password);
 }
 
 async function getProtectionTypeAsync() {
-    return await storage.getIntAsync('protectionType');
+    return await storage.getIntAsync(key.protectionTypeKey);
 }
 
 async function getPasswordAsync() {
-    return await storage.getStringAsync('password');
+    return await storage.getStringAsync(key.passwordKey);
 }
 
 async function getAllEntriesAsync() {
     let data: Array<object> = [];
 
-    let keys = await storage.getArrayAsync('allEntryKeys');
+    let keys = await storage.getArrayAsync(key.allEntriesKeyArrayKey);
     if (keys != null) {
         keys.forEach(async key => {
             // TODO: GetMultiple doesnt work for now; add fix when fixed
@@ -110,31 +129,37 @@ function editEntry(entry: {id: string}) {
 async function addEntryAsync(entry: {id: string}) {
     let cleanKey: string;
 
-    const key = await storage.getIntAsync('nextId');
-    if (key != null) {
-        cleanKey = key.toString();
-        storage.setInt('nextId', key + 1);
+    const entry_key = await storage.getIntAsync(key.nextIdKey);
+    if (entry_key != null) {
+        cleanKey = entry_key.toString();
+        storage.setInt(key.nextIdKey, entry_key + 1);
     } else {
         cleanKey = '1';
-        storage.setInt('nextId', 2);
+        storage.setInt(key.nextIdKey, 2);
     }
     entry.id = cleanKey;
     storage.setMap(cleanKey, entry);
 
-    storage.getArray('allEntryKeys', (err: string, result: Array<string>) => {
-        if (err) return;
-        if (result != null) {
-            storage.setArray('allEntryKeys', [...result, cleanKey]);
-        } else {
-            storage.setArray('allEntryKeys', [cleanKey]);
-        }
-    });
+    storage.getArray(
+        key.allEntriesKeyArrayKey,
+        (err: string, result: Array<string>) => {
+            if (err) return;
+            if (result != null) {
+                storage.setArray(key.allEntriesKeyArrayKey, [
+                    ...result,
+                    cleanKey,
+                ]);
+            } else {
+                storage.setArray(key.allEntriesKeyArrayKey, [cleanKey]);
+            }
+        },
+    );
 
     return cleanKey;
 }
 
 async function removeEntryAsync(id: string) {
-    const allKeys = await storage.getArrayAsync('allEntryKeys');
+    const allKeys = await storage.getArrayAsync(key.allEntriesKeyArrayKey);
 
     if (allKeys != null) {
         let newKeys: Array<string> = [];
@@ -143,7 +168,7 @@ async function removeEntryAsync(id: string) {
                 newKeys.push(key);
             }
         });
-        await storage.setArrayAsync('allEntryKeys', newKeys);
+        await storage.setArrayAsync(key.allEntriesKeyArrayKey, newKeys);
     }
 
     return await storage.removeItem(id); // Always returns null?

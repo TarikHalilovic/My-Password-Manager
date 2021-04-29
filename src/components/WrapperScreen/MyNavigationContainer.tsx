@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar, Platform} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -12,33 +12,21 @@ import {Backups} from '../SettingsScreen/Backups/Backups';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {Linking, Platform} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const PERSISTENCE_KEY = 'NAVIGATION_STATE';
+import {MMKVService} from '../../service/MMKVService';
 
 const Stack = createStackNavigator();
 
 export const MyNavigationContainer = () => {
     const [isReady, setIsReady] = useState(false);
-    const [initialState, setInitialState] = useState();
+    const [initialState, setInitialState] = useState<any>();
 
     useEffect(() => {
-        const restoreState = async () => {
+        const restoreState = () => {
             try {
-                const initialUrl = await Linking.getInitialURL();
-
-                if (Platform.OS !== 'web' && initialUrl == null) {
-                    // Only restore state if there's no deep link and we're not on web
-                    const savedStateString = await AsyncStorage.getItem(
-                        PERSISTENCE_KEY,
-                    );
-                    const state = savedStateString
-                        ? JSON.parse(savedStateString)
-                        : undefined;
-
-                    if (state !== undefined) {
-                        setInitialState(state);
+                if (Platform.OS !== 'web') {
+                    const savedState = MMKVService.getNavigationState();
+                    if (savedState) {
+                        setInitialState(savedState);
                     }
                 }
             } finally {
@@ -73,15 +61,9 @@ export const MyNavigationContainer = () => {
                     }
                 }
                 if (stateCopy != null) {
-                    AsyncStorage.setItem(
-                        PERSISTENCE_KEY,
-                        JSON.stringify(stateCopy),
-                    );
+                    MMKVService.setNavigationState(stateCopy);
                 } else {
-                    AsyncStorage.setItem(
-                        PERSISTENCE_KEY,
-                        JSON.stringify(state),
-                    );
+                    MMKVService.setNavigationState(state);
                 }
             }}
         >
