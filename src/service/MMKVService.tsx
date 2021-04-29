@@ -4,7 +4,6 @@ import MMKVStorage from 'react-native-mmkv-storage';
 import {ProtectionType} from '../helpers/ProtectionType';
 
 const key = {
-    navigationKey: 'NAVIGATION_STATE',
     nextIdKey: 'NEXT_ID',
     protectionTypeKey: 'PROTECTION_TYPE',
     allEntriesKeyArrayKey: 'ALL_ENTRIES_KEY_ARRAY',
@@ -27,16 +26,7 @@ export const MMKVService = {
     setPasswordAsync,
     getPasswordAsync,
     restoreFromBackupFileAsync,
-    setNavigationState,
-    getNavigationState,
 };
-
-function setNavigationState(navigationState: object) {
-    storage.setMap(key.navigationKey, navigationState);
-}
-function getNavigationState() {
-    return storage.getMap(key.navigationKey);
-}
 
 async function restoreFromBackupFileAsync(
     entries: Array<{
