@@ -104,6 +104,7 @@ export const AddEditEntry = ({navigation, route}) => {
                         }
                     />
                     <TextInput
+                        autoCapitalize="none"
                         placeholder="Username"
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
@@ -119,6 +120,7 @@ export const AddEditEntry = ({navigation, route}) => {
                         }
                     />
                     <TextInput
+                        autoCapitalize="none"
                         placeholder="Email"
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
@@ -134,6 +136,7 @@ export const AddEditEntry = ({navigation, route}) => {
                         }
                     />
                     <TextInput
+                        autoCapitalize="none"
                         placeholder="Password"
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}

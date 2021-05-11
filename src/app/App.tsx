@@ -81,7 +81,6 @@ const App: () => ReactNode = () => {
             passwordAuthenticate();
         } else if (protectionType == ProtectionType.FINGERPRINT) {
             fingerprintAuthenticate();
-            //} else if (protectionType == ProtectionType.DISABLED) {
         } else {
             setAllowed(true);
         }
