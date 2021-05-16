@@ -4,6 +4,7 @@ import MMKVStorage from 'react-native-mmkv-storage';
 import {ProtectionType} from '../helpers/ProtectionType';
 
 const key = {
+    navigationKey: 'NAVIGATION_STATE',
     nextIdKey: 'NEXT_ID',
     protectionTypeKey: 'PROTECTION_TYPE',
     allEntriesKeyArrayKey: 'ALL_ENTRIES_KEY_ARRAY',
@@ -26,7 +27,16 @@ export const MMKVService = {
     setPasswordAsync,
     getPasswordAsync,
     restoreFromBackupFileAsync,
+    setNavigationState,
+    getNavigationState,
 };
+
+function setNavigationState(navigationState: object) {
+    storage.setMap(key.navigationKey, navigationState);
+}
+function getNavigationState() {
+    return storage.getMap(key.navigationKey);
+}
 
 async function restoreFromBackupFileAsync(
     entries: Array<{
@@ -101,7 +111,7 @@ async function getAllEntriesAsync() {
 
     let keys = await storage.getArrayAsync(key.allEntriesKeyArrayKey);
     if (keys != null) {
-        keys.forEach(async key => {
+        keys.forEach(async (key: any) => {
             // TODO: GetMultiple doesnt work for now; add fix when fixed
             let item = await storage.getMapAsync(key);
             if (item != null) data.push(item);
@@ -132,7 +142,7 @@ async function addEntryAsync(entry: {id: string}) {
 
     storage.getArray(
         key.allEntriesKeyArrayKey,
-        (err: string, result: Array<string>) => {
+        (err: any, result: Array<string>) => {
             if (err) return;
             if (result != null) {
                 storage.setArray(key.allEntriesKeyArrayKey, [
@@ -145,15 +155,25 @@ async function addEntryAsync(entry: {id: string}) {
         },
     );
 
+    // after updating to mmkv 0.5.5 callbacks will be unavailable so use below
+    // const currentKeys = storage.getArray(key.allEntriesKeyArrayKey);
+    // if (currentKeys) {
+    //     storage.setArray(key.allEntriesKeyArrayKey, [...currentKeys, cleanKey]);
+    // } else {
+    //     storage.setArray(key.allEntriesKeyArrayKey, [cleanKey]);
+    // }
+
     return cleanKey;
 }
 
 async function removeEntryAsync(id: string) {
-    const allKeys = await storage.getArrayAsync(key.allEntriesKeyArrayKey);
+    const allKeys: Array<string> = await storage.getArrayAsync(
+        key.allEntriesKeyArrayKey,
+    );
 
     if (allKeys != null) {
         let newKeys: Array<string> = [];
-        allKeys.forEach(key => {
+        allKeys.forEach((key: string) => {
             if (key != id) {
                 newKeys.push(key);
             }

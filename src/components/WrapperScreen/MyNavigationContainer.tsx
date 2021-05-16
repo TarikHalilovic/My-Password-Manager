@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, SafeAreaView, StatusBar, Platform} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -12,11 +12,61 @@ import {Backups} from '../SettingsScreen/Backups/Backups';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import {MMKVService} from '../../service/MMKVService';
+
 const Stack = createStackNavigator();
 
 export const MyNavigationContainer = () => {
+    const [isReady, setIsReady] = useState(false);
+    const [initialState, setInitialState] = useState<any>();
+
+    useEffect(() => {
+        const restoreState = () => {
+            try {
+                if (Platform.OS !== 'web') {
+                    const savedState = MMKVService.getNavigationState();
+                    if (savedState) {
+                        setInitialState(savedState);
+                    }
+                }
+            } finally {
+                setIsReady(true);
+            }
+        };
+
+        if (!isReady) {
+            restoreState();
+        }
+    }, [isReady]);
+    if (!isReady) {
+        return null;
+    }
+
     return (
-        <NavigationContainer>
+        <NavigationContainer
+            initialState={initialState}
+            onStateChange={state => {
+                let stateCopy = null;
+                if (state.routes != null) {
+                    for (let i = 0; i < state.routes.length; i++) {
+                        if (state.routes[i].name == 'MainScreen') {
+                            stateCopy = Object.assign({}, state);
+                            // Delete params on MainScreen because
+                            //   addEditEntry runs if there is Entry object in params
+                            // AddEdit function shouldnt run when returning from inactive
+                            // Cloning state is expensive workaround tho
+                            delete stateCopy.routes[i].params;
+                            break;
+                        }
+                    }
+                }
+                if (stateCopy != null) {
+                    MMKVService.setNavigationState(stateCopy);
+                } else {
+                    MMKVService.setNavigationState(state);
+                }
+            }}
+        >
             <SafeAreaView style={styles.container}>
                 <StatusBar />
                 <Stack.Navigator
