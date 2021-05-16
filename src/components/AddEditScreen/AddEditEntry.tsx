@@ -32,6 +32,13 @@ export const AddEditEntry = ({navigation, route}) => {
               },
     );
 
+    function setEntryProperly(keyName: string, value: string) {
+        setEntry({...entry, [keyName]: value});
+        navigation.setParams({
+            row: {...entry, [keyName]: value},
+        });
+    }
+
     function validate() {
         if (entry.name == '') {
             setNameError('Service name/url must have value.');
@@ -69,7 +76,10 @@ export const AddEditEntry = ({navigation, route}) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView
+                contentContainerStyle={styles.scrollContainer}
+                keyboardShouldPersistTaps="handled"
+            >
                 <RandomPasswordConfiguratorModal
                     visible={visiblePwModal}
                     includeSpecialChars={includeSpecialCharsPw}
@@ -93,15 +103,9 @@ export const AddEditEntry = ({navigation, route}) => {
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
                         value={entry.name}
-                        onChangeText={val =>
-                            setEntry({
-                                id: entry.id,
-                                name: val,
-                                username: entry.username,
-                                email: entry.email,
-                                pw: entry.pw,
-                            })
-                        }
+                        onChangeText={val => {
+                            setEntryProperly('name', val);
+                        }}
                     />
                     <TextInput
                         autoCapitalize="none"
@@ -109,15 +113,9 @@ export const AddEditEntry = ({navigation, route}) => {
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
                         value={entry.username}
-                        onChangeText={val =>
-                            setEntry({
-                                id: entry.id,
-                                name: entry.name,
-                                username: val,
-                                email: entry.email,
-                                pw: entry.pw,
-                            })
-                        }
+                        onChangeText={val => {
+                            setEntryProperly('username', val);
+                        }}
                     />
                     <TextInput
                         autoCapitalize="none"
@@ -125,15 +123,9 @@ export const AddEditEntry = ({navigation, route}) => {
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
                         value={entry.email}
-                        onChangeText={val =>
-                            setEntry({
-                                id: entry.id,
-                                name: entry.name,
-                                username: entry.username,
-                                email: val,
-                                pw: entry.pw,
-                            })
-                        }
+                        onChangeText={val => {
+                            setEntryProperly('email', val);
+                        }}
                     />
                     <TextInput
                         autoCapitalize="none"
@@ -141,15 +133,9 @@ export const AddEditEntry = ({navigation, route}) => {
                         placeholderTextColor="#8a6e6d"
                         style={styles.inputStyle}
                         value={entry.pw}
-                        onChangeText={val =>
-                            setEntry({
-                                id: entry.id,
-                                name: entry.name,
-                                username: entry.username,
-                                email: entry.email,
-                                pw: val,
-                            })
-                        }
+                        onChangeText={val => {
+                            setEntryProperly('pw', val);
+                        }}
                     />
                     <View style={styles.errorContainer}>
                         <Text style={styles.errorText}>{nameError}</Text>
@@ -165,18 +151,15 @@ export const AddEditEntry = ({navigation, route}) => {
                             <Button
                                 title="Generate Pw"
                                 onPress={() => {
-                                    setEntry({
-                                        id: entry.id,
-                                        name: entry.name,
-                                        username: entry.username,
-                                        email: entry.email,
-                                        pw: generateRandomPw(
+                                    setEntryProperly(
+                                        'pw',
+                                        generateRandomPw(
                                             lengthPw,
                                             includeCapitalLettersPw,
                                             includeSpecialCharsPw,
                                             includeNumbersPw,
                                         ),
-                                    });
+                                    );
                                 }}
                                 color="#0225c2"
                             />
